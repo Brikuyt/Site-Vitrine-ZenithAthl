@@ -52,10 +52,18 @@ nav {
     color: var(--white);
     text-decoration: none;
     letter-spacing: 1px;
+    display: flex;
+    align-items: center;
 }
 
 .logo span {
     color: var(--secondary);
+}
+
+.logo img {
+    height: 120px;
+    width: auto;
+    display: block;
 }
 
 .nav-links {
