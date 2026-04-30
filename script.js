@@ -21,10 +21,9 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         e.preventDefault();
         const target = document.querySelector(this.getAttribute('href'));
         if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
+            const headerHeight = document.querySelector('header').offsetHeight;
+            const top = target.getBoundingClientRect().top + window.scrollY - headerHeight;
+            window.scrollTo({ top, behavior: 'smooth' });
         }
     });
 });
