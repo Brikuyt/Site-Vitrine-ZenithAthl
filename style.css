@@ -650,6 +650,25 @@ footer {
 
     .offer-card {
         flex: 0 0 100%;
+        padding: 24px 28px;
+    }
+
+    .offer-card .price {
+        font-size: 36px;
+        margin: 12px 0;
+    }
+
+    .offer-card h3 {
+        font-size: 22px;
+        margin-bottom: 12px;
+    }
+
+    .offer-features {
+        margin: 16px 0;
+    }
+
+    .offer-features li {
+        padding: 6px 0;
     }
 
     .carousel-btn {
