@@ -55,7 +55,9 @@ const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
             entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
+            entry.target.style.transform = entry.target.classList.contains('featured')
+                ? 'scale(1.03)'
+                : 'translateY(0)';
         }
     });
 }, observerOptions);
@@ -63,7 +65,77 @@ const observer = new IntersectionObserver((entries) => {
 document.querySelectorAll('.offer-card, .stat-item').forEach(el => {
     el.style.opacity = '0';
     el.style.transform = 'translateY(30px)';
-    el.style.transition = 'all 0.6s ease';
+    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease, box-shadow 0.3s ease';
     observer.observe(el);
 });
+
+// Carousel des offres
+(function () {
+    const track = document.querySelector('.offers-track');
+    const wrapper = document.querySelector('.offers-track-wrapper');
+    const prevBtn = document.querySelector('.carousel-prev');
+    const nextBtn = document.querySelector('.carousel-next');
+    const dots = document.querySelectorAll('.carousel-dot');
+    const cards = document.querySelectorAll('.offer-card');
+
+    if (!track || !cards.length) return;
+
+    let currentIndex = 0;
+
+    function getVisible() {
+        if (window.innerWidth <= 767) return 1;
+        if (window.innerWidth <= 1024) return 2;
+        return 3;
+    }
+
+    function maxIndex() {
+        return Math.max(0, cards.length - getVisible());
+    }
+
+    function updateCarousel() {
+        const gap = 30;
+        const cardWidth = cards[0].offsetWidth + gap;
+        track.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
+
+        prevBtn.disabled = currentIndex === 0;
+        nextBtn.disabled = currentIndex >= maxIndex();
+
+        dots.forEach((dot, i) => {
+            dot.classList.toggle('active', i === currentIndex);
+        });
+    }
+
+    prevBtn.addEventListener('click', () => {
+        if (currentIndex > 0) { currentIndex--; updateCarousel(); }
+    });
+
+    nextBtn.addEventListener('click', () => {
+        if (currentIndex < maxIndex()) { currentIndex++; updateCarousel(); }
+    });
+
+    dots.forEach(dot => {
+        dot.addEventListener('click', () => {
+            currentIndex = Math.min(parseInt(dot.dataset.index), maxIndex());
+            updateCarousel();
+        });
+    });
+
+    // Swipe tactile
+    let touchStartX = 0;
+    wrapper.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+    wrapper.addEventListener('touchend', e => {
+        const diff = touchStartX - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 50) {
+            if (diff > 0 && currentIndex < maxIndex()) { currentIndex++; updateCarousel(); }
+            else if (diff < 0 && currentIndex > 0) { currentIndex--; updateCarousel(); }
+        }
+    }, { passive: true });
+
+    window.addEventListener('resize', () => {
+        currentIndex = Math.min(currentIndex, maxIndex());
+        updateCarousel();
+    });
+
+    updateCarousel();
+}());
 
